@@ -199,30 +199,62 @@ const App: React.FC = () => {
         }));
     };
 
-    const handleAddItem = () => {
+    const handleAddItem = async () => {
         const cleanedNewItem = cleanRow(newItem);
-        setLegoData((prev) => [...prev, cleanedNewItem]);
-        setFilteredData((prev) => [...prev, cleanedNewItem]);
 
-        // Reset the form
-        setNewItem({
-            name: "",
-            id: "",
-            is_in_set: null,
-            release_year: "",
-            number_bricklink_collections: 0,
-            in_books: 0,
-            in_sets: 0,
-            state: "",
-            amount: 0,
-            purchase_date: null,
-            price: 0,
-            note: null,
-            polybag_name: null,
-            part_of_my_set: null,
-            theme: "",
-            is_set: 0,
-        });
+        try {
+            // Send the new item to the backend to append to the CSV
+            await fetch("http://localhost:5000/api/lego", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(cleanedNewItem),
+            });
+
+            // Fetch updated data from the backend to refresh the UI
+            const response = await fetch("http://localhost:5000/api/lego");
+            const csvText = await response.text();
+
+            const rows = csvText
+                .split("\n")
+                .filter(Boolean)
+                .map((row) => row.split(";"));
+            const headers = rows[0].map((header) => header.trim());
+            const rawData = rows.slice(1).map((row) =>
+                row.reduce((obj: { [key: string]: string }, value, index) => {
+                    obj[headers[index]] = value.trim();
+                    return obj;
+                }, {})
+            );
+
+            const updatedData = rawData.map(cleanRow);
+
+            setLegoData(updatedData);
+            setFilteredData(updatedData);
+
+            // Reset the form
+            setNewItem({
+                name: "",
+                id: "",
+                is_in_set: null,
+                release_year: "",
+                number_bricklink_collections: 0,
+                in_books: 0,
+                in_sets: 0,
+                state: "",
+                amount: 0,
+                purchase_date: null,
+                price: 0,
+                note: null,
+                polybag_name: null,
+                part_of_my_set: null,
+                theme: "",
+                is_set: 0,
+            });
+        } catch (error) {
+            console.error("Error adding item:", error);
+        }
     };
 
     const getUniqueValues = (key: keyof LegoItem) => {
