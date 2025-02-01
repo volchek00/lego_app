@@ -1,0 +1,72 @@
+/* Container for all cards in the visual collection */
+.visual-collection {
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping to the next line */
+    gap: 20px; /* Space between cards */
+    justify-content: center; /* Center the cards in the container */
+    padding: 20px;
+    background-color: #1e1e1e; /* Dark background for the visual collection */
+  }
+  
+  /* Individual card styling */
+  .lego-card {
+    background-color: #333; /* Dark background for the card */
+    color: white; /* White text color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    width: 250px; /* Fixed width for the card */
+    height: 400px; /* Fixed height for the card */
+    display: flex;
+    flex-direction: column; /* Stack image and text vertically */
+    overflow: hidden; /* Prevent content from overflowing the card */
+    transition: transform 0.3s ease; /* Smooth scaling effect on hover */
+  }
+  
+  /* Hover effect for the card */
+  .lego-card:hover {
+    transform: scale(1.05); /* Slightly enlarge the card */
+  }
+  
+  /* Image container */
+  .image-container {
+    height: 55%; /* Fixed height to 50% of the card */
+    display: flex;
+    justify-content: center; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically */
+    overflow: hidden; /* Prevent image overflow */
+    background-color: #333; /* Placeholder background for the container */
+  }
+  
+  /* Image styling */
+  .card-image {
+    max-width: 100%; /* Image will not exceed the container width */
+    max-height: 100%; /* Image will not exceed the container height */
+    object-fit: contain; /* Maintain aspect ratio while fitting the container */
+  }
+  
+  /* Text container */
+  .text-container {
+    height: 45%; /* Fixed height to 50% of the card */
+    padding: 10px; /* Inner padding for spacing */
+    display: flex;
+    flex-direction: column; /* Stack text elements vertically */
+    justify-content: space-around; /* Distribute text evenly */
+    align-items: center; /* Center-align text horizontally */
+    text-align: center; /* Center-align text */
+    background-color: #333; /* Slightly darker background for contrast */
+  }
+  
+  /* Title styling */
+  .lego-card h3 {
+    font-size: 16px; /* Moderate font size for the title */
+    font-weight: bold; /* Bold title text */
+    margin: 5px 0;
+  }
+  
+  /* Paragraph styling for card details */
+  .lego-card p {
+    font-size: 14px; /* Standard font size for details */
+    margin: 0; /* Remove default margins for spacing */
+    line-height: 1.5; /* Comfortable line spacing */
+  }
+  
