@@ -18,7 +18,7 @@ type LegoItem = {
     polybag_name: string | null;
     part_of_my_set: string | null;
     theme: string;
-    is_set: number;
+    is_set: string;
 };
 
 // Default values for missing fields
@@ -45,7 +45,7 @@ const cleanRow = (row: any): LegoItem => {
         polybag_name: row.polybag_name || DEFAULT_STRING,
         part_of_my_set: row.part_of_my_set || DEFAULT_STRING,
         theme: row.theme || DEFAULT_STRING,
-        is_set: row.is_set || DEFAULT_NUMBER,
+        is_set: row.is_set || DEFAULT_STRING,
     };
 };
 
@@ -83,7 +83,7 @@ const App: React.FC = () => {
         state: "",
         amount: "",
         theme: "",
-        is_set: 0,
+        is_set: "",
     });
     const [searchQuery, setSearchQuery] = useState("");
     const [newItem, setNewItem] = useState<LegoItem>({
@@ -102,7 +102,7 @@ const App: React.FC = () => {
         polybag_name: null,
         part_of_my_set: null,
         theme: "",
-        is_set: 0,
+        is_set: "",
     });
 
     useEffect(() => {
@@ -140,8 +140,7 @@ const App: React.FC = () => {
                     (!filters.amount ||
                         item.amount === parseInt(filters.amount, 10)) &&
                     (!filters.theme || item.theme === filters.theme) &&
-                    (!filters.is_set ||
-                        Number(item.is_set ? 1 : 0) === filters.is_set)
+                    (!filters.is_set || item.is_set === filters.is_set)
                 );
             });
             setFilteredData(filtered);
@@ -166,7 +165,7 @@ const App: React.FC = () => {
             state: "",
             amount: "",
             theme: "",
-            is_set: 0,
+            is_set: "",
         });
         setSearchQuery("");
         setFilteredData(legoData);
@@ -180,22 +179,22 @@ const App: React.FC = () => {
         }));
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
         const { name, value } = e.target;
+
         setNewItem((prev) => ({
             ...prev,
-            [name]:
-                name === "is_set"
-                    ? value === "true"
-                    : [
-                          "number_bricklink_collections",
-                          "in_books",
-                          "in_sets",
-                          "amount",
-                          "price",
-                      ].includes(name)
-                    ? parseFloat(value)
-                    : value || null,
+            [name]: [
+                "number_bricklink_collections",
+                "in_books",
+                "in_sets",
+                "amount",
+                "price",
+            ].includes(name)
+                ? parseFloat(value)
+                : value || null, // Treat is_set as a string ("mf" or "set")
         }));
     };
 
@@ -250,7 +249,7 @@ const App: React.FC = () => {
                 polybag_name: null,
                 part_of_my_set: null,
                 theme: "",
-                is_set: 0,
+                is_set: "",
             });
         } catch (error) {
             console.error("Error adding item:", error);
@@ -361,8 +360,8 @@ const App: React.FC = () => {
                         value={filters.is_set}
                     >
                         <option value="">All Types</option>
-                        <option value="0">Minifigure</option>
-                        <option value="1">Set</option>
+                        <option value="mf">Minifigure</option>
+                        <option value="set">Set</option>
                     </select>
                     <button
                         className="reset-button"
@@ -415,18 +414,22 @@ const App: React.FC = () => {
                     <div className="visual-collection">
                         {activeTab === "visual" && (
                             <div className="visual-collection">
-                                {filteredData.map((item, index) => (
-                                    <Card
-                                        key={index}
-                                        name={item.name}
-                                        id={item.id} // Pass id to load the image
-                                        theme={item.theme}
-                                        releaseYear={item.release_year}
-                                        state={item.state}
-                                        amount={item.amount}
-                                        price={item.price}
-                                    />
-                                ))}
+                                {filteredData
+                                    .sort((a, b) =>
+                                        a.name.localeCompare(b.name)
+                                    )
+                                    .map((item, index) => (
+                                        <Card
+                                            key={index}
+                                            name={item.name}
+                                            id={item.id} // Pass id to load the image
+                                            theme={item.theme}
+                                            releaseYear={item.release_year}
+                                            state={item.state}
+                                            amount={item.amount}
+                                            price={item.price}
+                                        />
+                                    ))}
                             </div>
                         )}
                     </div>
